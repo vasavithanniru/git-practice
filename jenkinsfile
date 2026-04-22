@@ -1,5 +1,13 @@
 pipeline {
- agent any
+ agent {
+    label 'AGENT-1'
+ }
+
+ options{
+            timeout(time: 30, unit: 'MINUTES')
+            disableConcurrentBuilds()
+            //retry(1)
+}
 
  environment {
   DEV_SERVER = "54.209.65.42"
@@ -32,7 +40,7 @@ pipeline {
    }
    steps {
     sh """
-    scp test.txt user@${DEV_SERVER}:/tmp/test.txt
+    scp test.txt ec2-user@${DEV_SERVER}:/tmp/test.txt
     """
    }
   }
@@ -45,7 +53,7 @@ pipeline {
     input message: "Approve Production Deployment?", ok: "Deploy"
 
     sh """
-    scp test.txt user@${PROD_SERVER}:/tmp/test.txt
+    scp test.txt ec2-user@${PROD_SERVER}:/tmp/test.txt
     """
    }
   }
