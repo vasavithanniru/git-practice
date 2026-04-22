@@ -1,3 +1,59 @@
-Hi, This is 1st pipeline
-Hi, This is 2nd pipeline
-Hi, This is 3nd pipeline
+pipeline {
+ agent any
+
+ environment {
+  DEV_SERVER = "54.209.65.42"
+  PROD_SERVER = "52.7.172.146"
+ }
+
+ stages {
+
+  stage('Checkout') {
+   steps {
+    checkout scm
+   }
+  }
+
+  stage('Validate File') {
+   steps {
+    sh 'test -f test.txt && echo "File exists" || (echo "Missing test.txt" && exit 1)'
+   }
+  }
+
+  stage('Show Content') {
+   steps {
+    sh 'cat test.txt'
+   }
+  }
+
+  stage('Deploy to Dev') {
+   when {
+    branch 'develop'
+   }
+   steps {
+    sh """
+    scp test.txt user@${DEV_SERVER}:/tmp/test.txt
+    """
+   }
+  }
+
+  stage('Deploy to Production') {
+   when {
+    branch 'main'
+   }
+   steps {
+    input message: "Approve Production Deployment?", ok: "Deploy"
+
+    sh """
+    scp test.txt user@${PROD_SERVER}:/tmp/test.txt
+    """
+   }
+  }
+ }
+
+ post {
+  success {
+   echo "Done!"
+  }
+ }
+}
