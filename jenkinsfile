@@ -43,7 +43,8 @@ pipeline {
          sh """
          scp test.txt ec2-user@${DEV_SERVER}:/tmp/test.txt
          """
-   }
+      }
+   }   
   }
 
   stage('Deploy to Production') {
