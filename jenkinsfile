@@ -58,8 +58,8 @@ pipeline {
     scp test.txt ec2-user@${PROD_SERVER}:/tmp/test.txt
     """
     }
+   }
   }
- }
 
  post {
   success {
