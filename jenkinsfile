@@ -10,7 +10,7 @@ pipeline {
 }
 
  environment {
-  DEV_SERVER = "54.209.65.42"
+  DEV_SERVER = "54.242.80.132"
   PROD_SERVER = "52.7.172.146"
  }
 
@@ -39,10 +39,12 @@ pipeline {
     branch 'develop'
    }
    steps {
-    sh """
-    scp test.txt ec2-user@${DEV_SERVER}:/tmp/test.txt
-    """
-   }
+      sshagent(credentials: ['pem-key']) {
+         sh """
+         scp test.txt ec2-user@${DEV_SERVER}:/tmp/test.txt
+         """
+      }
+   }   
   }
 
   stage('Deploy to Production') {
