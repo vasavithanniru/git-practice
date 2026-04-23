@@ -41,7 +41,7 @@ pipeline {
    steps {
       sshagent(credentials: ['pem-key']) {
          sh """
-         scp test.txt ec2-user@${DEV_SERVER}:/tmp/test.txt
+         scp -o StrictHostKeyChecking=no test.txt ec2-user@${DEV_SERVER}:/tmp/test.txt
          """
       }
    }   
@@ -53,14 +53,13 @@ pipeline {
    }
    steps {
     input message: "Approve Production Deployment?", ok: "Deploy"
-    sshagent(credentials: ['pem-key']) { 
+
     sh """
     scp test.txt ec2-user@${PROD_SERVER}:/tmp/test.txt
     """
-    }
    }
   }
-  }
+ }
 
  post {
   success {
